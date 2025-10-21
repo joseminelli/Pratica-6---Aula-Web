@@ -87,6 +87,51 @@ async function salvarAluno(event) {
     }
 }
 
+async function excluirAluno(id) {
+    if (!confirm('Tem certeza de que deseja excluir este aluno?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/alunos/${id}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) {
+            throw new Error('Erro ao excluir aluno');
+        }
+
+        alert('Aluno excluído com sucesso!');
+        carregarAlunos();
+
+    } catch (error) {
+        console.error('Falha ao excluir aluno:', error);
+        alert('Não foi possível excluir o aluno.');
+    }
+}
+
+
+async function prepararEdicao(id) {
+    try {
+        const response = await fetch(`${API_URL}/alunos/${id}`);
+        if (!response.ok) {
+            throw new Error('Erro ao buscar dados do aluno');
+        }
+        const aluno = await response.json();
+
+        document.getElementById('alunoId').value = aluno.id;
+        document.getElementById('nome').value = aluno.nome;
+        document.getElementById('turma').value = aluno.turma;
+        document.getElementById('curso').value = aluno.curso;
+        document.getElementById('matricula').value = aluno.matricula;
+
+        document.getElementById('btnCancelar').style.display = 'inline-block';
+
+    } catch (error) {
+        console.error('Falha ao preparar edição:', error);
+        alert('Não foi possível carregar dados para edição.');
+    }
+}
 
 function resetarFormulario() {
     document.getElementById('formAluno').reset();
